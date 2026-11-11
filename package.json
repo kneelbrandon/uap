@@ -1,0 +1,19 @@
+{
+  "name": "event-check-in",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A standalone QR check-in and raffle roster for an event.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@zxing/browser": "^0.2.1",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}

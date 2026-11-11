@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="UAP Baguio Chapter 50th Anniversary Gala guest check-in."
+    />
+    <meta name="theme-color" content="#092b1b" />
+    <title>Gala Check-in — UAP Baguio City Chapter</title>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-mark" aria-hidden="true">50</div>
+        <div class="brand-copy">
+          <p class="eyebrow">UAP BAGUIO CITY CHAPTER</p>
+          <h1>50th Anniversary Gala</h1>
+        </div>
+        <div class="event-meta">
+          <span>DECEMBER 4, 2026</span>
+          <span>WILLIAM FORBES BALLROOM · BAGUIO COUNTRY CLUB</span>
+        </div>
+        <span class="demo-badge">Sample roster</span>
+      </header>
+
+      <main>
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+        <section class="stats" aria-label="Event totals">
+          <article class="stat-card">
+            <span class="stat-label">REGISTERED</span>
+            <strong id="member-count">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">CHECKED IN</span>
+            <strong id="checked-in-count">0</strong>
+          </article>
+          <article class="stat-card stat-card-accent">
+            <span class="stat-label">RAFFLE ENTRIES</span>
+            <strong id="raffle-count">0</strong>
+          </article>
+        </section>
+
+        <div class="workspace-grid">
+          <section class="panel scanner-panel">
+            <div class="panel-heading">
+              <div class="heading-copy">
+                <p class="eyebrow">ADMIT ONE GUEST</p>
+                <h2>Scan to check in</h2>
+              </div>
+              <span class="live-status"><span class="live-dot"></span> Ready</span>
+            </div>
+            <p class="panel-copy">Point the camera at the guest’s QR code.</p>
+            <div class="scanner-frame">
+              <video id="scanner-video" muted playsinline></video>
+              <div id="scanner-placeholder" class="scanner-placeholder">
+                <span class="scan-icon" aria-hidden="true">▦</span>
+                <span>Camera preview</span>
+              </div>
+            </div>
+            <div class="scanner-controls">
+              <button id="start-scanner" class="button button-primary" type="button">
+                Start scanning
+              </button>
+              <button id="stop-scanner" class="button button-secondary" type="button" disabled>
+                Stop
+              </button>
+            </div>
+            <p id="scanner-status" class="scanner-status" aria-live="polite">
+              Allow camera access when prompted.
+            </p>
+            <details class="manual-details">
+              <summary>Enter code manually</summary>
+              <form id="manual-checkin-form" class="manual-form">
+                <label for="manual-qr">QR code text</label>
+                <div class="manual-form-row">
+                  <input
+                    id="manual-qr"
+                    type="text"
+                    placeholder="Paste QR text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    required
+                  />
+                  <button class="button button-secondary" type="submit">Check in</button>
+                </div>
+              </form>
+            </details>
+            <p class="privacy-note">
+              Phone-camera QR check-in requires new cards printed after Sheets is connected.
+            </p>
+          </section>
+
+          <section class="panel raffle-panel">
+            <div class="panel-heading">
+              <div class="heading-copy">
+                <p class="eyebrow">LIVE ATTENDANCE</p>
+                <h2>Checked-in guests</h2>
+              </div>
+              <div class="panel-heading-actions">
+                <button id="refresh-attendance" class="button button-secondary" type="button" disabled>
+                  Refresh from Sheets
+                </button>
+                <button id="export-raffle" class="button button-secondary" type="button">
+                  Export list
+                </button>
+                <button id="sync-pending" class="button button-secondary" type="button" disabled>
+                  Retry sync
+                </button>
+              </div>
+            </div>
+            <p class="panel-copy">Each guest appears once after check-in.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Guest</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Sync</th>
+                  </tr>
+                </thead>
+                <tbody id="raffle-list"></tbody>
+              </table>
+              <p id="empty-raffle" class="empty-state table-empty">
+                No check-ins yet. Scanned guests will appear here.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <section class="tools-grid" aria-label="Event setup">
+          <details class="panel tool-panel sheet-setup">
+            <summary>
+              <span class="summary-copy">
+                <span class="eyebrow">SETUP</span>
+                <span class="summary-title">Google Sheets</span>
+              </span>
+              <span class="summary-action">Connect</span>
+            </summary>
+            <p class="panel-copy">
+              Load the registered guests and check-ins already in your sheet. A roster is uploaded only if the Members tab is empty.
+            </p>
+            <form id="sheet-config-form" class="sheet-config-form">
+              <label for="sheet-endpoint">Apps Script web app URL</label>
+              <input
+                id="sheet-endpoint"
+                type="url"
+                placeholder="https://script.google.com/macros/s/…/exec"
+                autocomplete="url"
+                required
+              />
+              <label for="sheet-key">Setup key</label>
+              <input
+                id="sheet-key"
+                type="password"
+                placeholder="Paste the setup key"
+                autocomplete="off"
+                required
+              />
+              <div class="sheet-actions">
+                <button id="save-sheet-config" class="button button-primary" type="submit">
+                  Connect &amp; load roster
+                </button>
+              </div>
+            </form>
+            <p id="sheet-status" class="sheet-status" aria-live="polite">
+              Not connected. Check-ins are saved on this device.
+            </p>
+          </details>
+
+          <details class="panel tool-panel roster-panel">
+            <summary>
+              <span class="summary-copy">
+                <span class="eyebrow">SETUP</span>
+                <span class="summary-title">Registered guests</span>
+              </span>
+              <span class="summary-action">Manage</span>
+            </summary>
+            <div class="roster-tools">
+              <p class="panel-copy">Sample names are for testing. Replace them with your event roster.</p>
+              <form id="add-member-form" class="add-member-form">
+                <label class="sr-only" for="member-name">Guest name</label>
+                <input
+                  id="member-name"
+                  name="memberName"
+                  type="text"
+                  maxlength="100"
+                  placeholder="Add a guest name"
+                  autocomplete="off"
+                  required
+                />
+                <button class="button button-primary" type="submit">Add</button>
+              </form>
+              <div class="transfer-tools">
+                <button id="export-roster" class="text-button" type="button">Export roster</button>
+                <label class="text-button import-label" for="import-roster">
+                  Import roster
+                  <input id="import-roster" type="file" accept="application/json,.json" />
+                </label>
+                <button id="print-codes" class="text-button" type="button">Print QR cards</button>
+              </div>
+              <p id="roster-status" class="roster-status" role="status" aria-live="polite"></p>
+              <ul id="member-list" class="member-list" aria-label="Registered guests"></ul>
+              <p id="empty-roster" class="empty-state" hidden>
+                No guests yet. Add names to create their QR codes.
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <footer class="footnote">
+          50 YEARS OF MOTION. A LEGACY IN PROGRESS.
+        </footer>
+      </main>
+    </div>
+
+    <dialog id="qr-dialog" class="qr-dialog">
+      <form method="dialog" class="dialog-close-form">
+        <button class="dialog-close" aria-label="Close QR code dialog">×</button>
+      </form>
+      <p class="eyebrow">GUEST QR CODE</p>
+      <h2 id="qr-member-name"></h2>
+      <img id="qr-image" alt="" />
+      <p id="qr-hint" class="qr-hint">Keep this code with the registered guest.</p>
+    </dialog>
+
+    <section id="print-sheet" class="print-sheet" aria-hidden="true"></section>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
